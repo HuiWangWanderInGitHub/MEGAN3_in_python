@@ -1,0 +1,10 @@
+﻿Item,Value,Description
+GAMBD_YN,0,﻿EA bidirectional exchange LAI response
+GAMAQ_YN,0,﻿EA emission activity response to air quality
+GAMHT_YN,0,﻿EA response to high temperature
+GAMLT_YN,0,﻿EA response to low temperature
+GAMHW_YN,0,﻿EA response to high wind speed
+GAMSM_YN,0,EA response to drought (soil moisture)
+RH_QV,1,﻿1 for Relative Humidity; 0: water vapor mixing ratio
+Latitude,45.4,latitude of the site
+WT,0.196,Wilting Point of soil
