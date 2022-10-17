@@ -56,6 +56,7 @@ The input files in the package contains model running parameters and driven fiel
 | Day   | Julian Day  | [1-366] |---|
 | Hour   | Hour  |  [0-23]  |---|
 | AirTem   | Air Temperature  |  °C  |---|
+| PPFD   | Photosynthetic Photon Flux Density |  umol/m2/s  |---|
 | RH  | Relative Humidty  |  %  |---|
 | AtmPres | Atmospheric Pressure  |  Pa  |---|
 | WSD | Wind Speed  |  m/s  |---|
