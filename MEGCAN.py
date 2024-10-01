@@ -144,7 +144,7 @@ def WaterVapPres(Dens, Pres):
 def RHtoWaterVapPres(RH,T):
     t = T- 273.15
     #Tetens equation
-    es= 6.112*np.exp(17.67*t/(t+243.5))
+    es= 0.6112*np.exp(17.67*t/(t+243.5))
 #----------------------------------------------------------------
     WaterVapPres = es*RH*0.01*1000
     return WaterVapPres
@@ -164,11 +164,10 @@ def RHtoWaterVapPres(RH,T):
 def WaterVapPrestoRH(WVP,T):
     t = T- 273.15
     #Tetens equation
-    es= 6.112*np.exp(17.67*t/(t+243.5))
+    es= 0.6112*np.exp(17.67*t/(t+243.5))
 #----------------------------------------------------------------
     RH = WVP/es
     return RH
-
 
 
 #ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -463,6 +462,13 @@ def LeafIR(Tk, Eps):
     LeafIR = Eps * Sb * (2 * (Tk**4.)) 
     return LeafIR
 
+def ExposedLeafIRin(HumidPa, Tk):
+    Sb = 0.0000000567
+    #EmissAtm        = 0.642 * (HumidPa / Tk)**(1./7.)
+    EmissAtm        = 0.7+5.95*(HumidPa/1000)*1e-4*np.exp(1500/(Tk))
+    ExposedLeafIRin = EmissAtm * Sb * (Tk**4.)
+    return ExposedLeafIRin
+
 
 
 #ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -693,15 +699,18 @@ def CanopyEB(Trate, Layers, Distgauss, Cantype, TairK0, Ws0,\
 #        SunleafIR(i) = 0.5*ExposedLeafIRin(HumidairPa0,TairK0)+1.5*IRin
 # Apparent atmospheric emissivity for clear skies: 
 # function of water vapor pressure (Pa) 
-# and ambient Temperature (K) based on Brutsaert(1975) 
+# and ambient Temperature (K) based on Idso (1981)
 # referenced in Leuning (1997)
 
         #EmissAtm        = 0.642 * (HumidairPa[i] / TairK[i])**(1./7.)   
-        EmissAtm        = 0.642 * (HumidairPa0 / TairK[i])**(1./7.)               
+        #EmissAtm        = 0.642 * (HumidairPa0 / TairK[i])**(1./7.)               
+        EmissAtm        = 0.7+5.95*(HumidairPa[i]/1000)*1e-4*np.exp(1500/(TairK[i]))
         IRin            = LeafIR(TairK[i], EmissAtm)
         #IRin            = EmissAtm * Sb * (2 * (TairK[i]**4.)) 
+        #ShadeleafIR[i]  = IRin
+        #SunleafIR[i]    = IRin 
         ShadeleafIR[i]  = IRin
-        SunleafIR[i]    = IRin 
+        SunleafIR[i]    = 1.5/2*IRin+0.5*ExposedLeafIRin(HumidairPa0,TairK0)
         
       # Sun
 

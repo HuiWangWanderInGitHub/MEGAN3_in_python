@@ -542,12 +542,6 @@ print("========         finished          =============")
 isop_obs_ra = ISOP_OBS
 isop_mod_ra = EMIS[:,2]*nmol2mg
 
-#EMIS[:,0] is date; EMIS[:,1] is hour.
-#isop_obs_p1 = isop_obs_ra[~np.isnan(isop_obs_ra)]
-#isop_mod_p1 = isop_mod_ra[~np.isnan(isop_obs_ra)]
-
-#isop_obs = isop_obs_p1[~np.isnan(isop_mod_p1)]
-#isop_mod = isop_mod_p1[~np.isnan(isop_mod_p1)]
 Time_ins = np.where((Hour >= 9) & (Hour <=17))
 Time_all = DOY+Hour
 Plot_time = Time_all[Time_ins]
