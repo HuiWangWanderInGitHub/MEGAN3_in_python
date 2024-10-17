@@ -56,7 +56,7 @@ The input files in the package contains model running parameters and driven fiel
 | Day   | Julian Day  | [1-366] |---|
 | Hour   | Hour  |  [0-23]  |---|
 | AirTem   | Air Temperature  |  °C  |---|
-| PPFD   | Photosynthetic Photon Flux Density |  umol/m2/s  |---|
+| PPFD   | Photosynthetic Photon Flux Density |  nmol/m2/s  |---|
 | LAI  | Leaf Area Index  |  m2/m2  |---|
 | RH  | Relative Humidty  |  %  |---|
 | AtmPres | Atmospheric Pressure  |  Pa  |---|
