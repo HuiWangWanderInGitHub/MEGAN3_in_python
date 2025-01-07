@@ -106,5 +106,6 @@ Users can modify the name of the files in "main_program.py". "Output_name_all" i
 
 ## _Reference_
 Guenther, A. B., Jiang, X., Heald, C. L., Sakulyanontvittaya, T., Duhl, T., Emmons, L. K., & Wang, X. (2012). The Model of Emissions of Gases and Aerosols from Nature version 2.1 (MEGAN2. 1): an extended and updated framework for modeling biogenic emissions. Geoscientific Model Development, 5(6), 1471-1492.
+Wang, H., Lu, X., Seco, R., Stavrakou, T., Karl, T., Jiang, X., ... & Guenther, A. B. (2022). Modeling isoprene emission response to drought and heatwaves within MEGAN using evapotranspiration data and by coupling with the community land model. Journal of advances in modeling earth systems, 14(12), e2022MS003174.
 
 
