@@ -101,7 +101,7 @@ class ModelBehaviorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary_directory:
             temporary_path = Path(temporary_directory)
             meteorology = pd.read_csv(
-                PROJECT_ROOT / "inputs" / "1.Met_HourlyData_2012_moflux_Kc.csv"
+                PROJECT_ROOT / "inputs" / "Met_HourlyData_2012_moflux_Kc.csv"
             )
             temperature_c = meteorology["AirTem(degreeC)"]
             saturation_vapor_pressure_pa = (
@@ -125,8 +125,8 @@ class ModelBehaviorTests(unittest.TestCase):
 
             paths = ModelPaths(
                 meteorology=meteorology_path,
-                emission_factors=PROJECT_ROOT / "inputs" / "3.EF_LDF.csv",
-                pft_fractions=PROJECT_ROOT / "inputs" / "4.PFT_Fraction.csv",
+                emission_factors=PROJECT_ROOT / "inputs" / "EF_LDF.csv",
+                pft_fractions=PROJECT_ROOT / "inputs" / "PFT_Fraction.csv",
                 output_directory=temporary_path / "outputs",
             )
             controls = replace(
