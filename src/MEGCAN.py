@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 """MEGAN canopy radiation and leaf-energy-balance model.
 
-The physical equations are retained from the original site-scale MEGAN code.
-This version organizes returned values with ``NamedTuple`` objects, uses clear
-variable names and docstrings, and keeps wrappers with the original function
-names so existing scripts remain usable.
+The model follows the original site-scale MEGAN canopy formulation, with
+three targeted physical corrections: a bounded exponential within-canopy wind
+profile, leaf width as the forced-convection length scale, and a temperature
+gradient sign consistent with depth measured downward from the canopy top.
+The public wrappers are retained so existing scripts remain usable.
 """
 
 from __future__ import annotations
@@ -538,8 +539,15 @@ def leaf_energy_balance(
     effective_wind = max(float(wind_speed_m_s), 0.001)
     ambient_vapor_density = 0.002165 * vapor_pressure_pa / air_temperature_k
 
+    if leaf_width_m <= 0.0 or leaf_length_m <= 0.0:
+        raise ValueError("leaf_width_m and leaf_length_m must be positive")
+
+    # Forced convection is controlled by the leaf dimension normal to the
+    # airflow.  Use leaf width here; leaf length remains the characteristic
+    # scale for the free-convection term below.  The previous implementation
+    # accepted leaf_width_m but never used it.
     forced_conductance = 0.0259 / (
-        0.004 * np.sqrt(leaf_length_m / effective_wind)
+        0.004 * np.sqrt(leaf_width_m / effective_wind)
     )
     resistance = stomatal_resistance(ppfd)
     outgoing_ir_at_air_temperature = leaf_ir_emission(
@@ -689,32 +697,31 @@ def canopy_energy_balance(
         humidity_gradient = cool_humidity_change / canopy_height
 
     layer_depth_m = canopy_depth * layer_positions
+
+    # layer_depth_m increases downward from the canopy top.  Positive daytime
+    # lapse rates therefore represent cooling with depth, while the negative
+    # nighttime rate represents a warmer canopy interior.
     canopy_air_temperature[:] = (
         above_canopy_temperature_k
-        + temperature_lapse_rate * layer_depth_m
+        - temperature_lapse_rate * layer_depth_m
     )
     water_vapor_pressure[:] = (
         above_canopy_vapor_pressure_pa
         + humidity_gradient * layer_depth_m
     )
 
-    wind_height = (
-        canopy_height
-        - layer_depth_m
-        - normalized_no_wind_depth * canopy_height
+    # Use a bounded exponential attenuation with normalized canopy depth.
+    # The characteristic in row 15 denotes the depth fraction at which only
+    # five percent of the above-floor wind excess remains.  This guarantees a
+    # positive, monotonic profile that never exceeds the above-canopy wind.
+    top_wind = max(float(above_canopy_wind_m_s), 0.001)
+    minimum_wind = min(0.05, top_wind)
+    no_wind_depth = max(float(normalized_no_wind_depth), 1.0e-6)
+    attenuation_coefficient = -np.log(0.05) / no_wind_depth
+    normalized_depth = layer_depth_m / max(canopy_depth, 1.0e-6)
+    wind_speed[:] = minimum_wind + (top_wind - minimum_wind) * np.exp(
+        -attenuation_coefficient * normalized_depth
     )
-    low_wind = wind_height < 0.001
-    wind_speed[low_wind] = 0.05
-    if np.any(~low_wind):
-        denominator = np.log(
-            canopy_height
-            - normalized_no_wind_depth * canopy_height
-        )
-        wind_speed[~low_wind] = (
-            above_canopy_wind_m_s
-            * np.log(wind_height[~low_wind])
-            / denominator
-        )
 
     for layer in range(number_of_layers):
         atmospheric_emissivity = (
